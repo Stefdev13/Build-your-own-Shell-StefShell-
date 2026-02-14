@@ -1,5 +1,6 @@
 import { createInterface } from "readline";
-import { builtins } from "./constants/builtins";
+import { commands } from "./services/commands/commands";
+import type { Command } from "./services/types/command";
 
 const rl = createInterface({
   input: process.stdin,
@@ -10,26 +11,15 @@ function run() {
   rl.question("$ ", (command: string) => {
     const splitCommand: string[] = command.split(" ");
 
-    switch (splitCommand[0]) {
-      case "q":
-        process.exit();
-      case "exit":
-        process.exit();
-      case "echo":
-        rl.write(`${splitCommand.slice(1).join(" ")} \n`);
-        break;
-      case "type":
-        if (builtins.includes(splitCommand.slice(1).join(" "))) {
-          rl.write(`${splitCommand.slice(1).join(" ")} is a shell builtin \n`);
-        } else {
-          console.log(`${splitCommand.slice(1).join(" ")}: not found`);
-        }
-        break;
-      default:
-        console.log(`${command}: command not found`);
-        break;
-    }
+    //Get command from Commands Map
+    const cmd: Command | undefined = commands.get(splitCommand[0]);
 
+    //Check if the command is found
+    if (typeof cmd != "undefined") {
+      cmd(rl, splitCommand.slice(1));
+    } else {
+      console.log(`${command}: command not found`);
+    }
     run();
   });
 }
