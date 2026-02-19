@@ -1,5 +1,1 @@
-export const builtins = [
-    "echo",
-    "exit",
-    "type",
-]
+export const builtins = ["echo", "exit", "type", "pwd"];
